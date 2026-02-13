@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SchedPro — Scheduling App</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div id="app" class="page">
+    <header class="topbar">
+      <div class="brand-left">
+        <div id="logoWrap">
+          <!-- simple svg logo -->
+          <svg width="42" height="42" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lg" x1="0" x2="1">
+                <stop offset="0" stop-color="#60a5fa"/>
+                <stop offset="1" stop-color="#6ee7b7"/>
+              </linearGradient>
+            </defs>
+            <rect x="4" y="4" width="56" height="56" rx="12" fill="url(#lg)" opacity="0.12"/>
+            <g transform="translate(12,12)">
+              <rect width="36" height="8" rx="2" fill="#fff" opacity="0.95" transform="translate(0,0) rotate(-6 18 4)"></rect>
+              <rect width="24" height="8" rx="2" fill="#fff" opacity="0.95" transform="translate(6,14) rotate(-2 18 4)"></rect>
+            </g>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="title">Sched<span>Pro</span></div>
+          <div class="subtitle">Smart scheduling</div>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <!-- THEME TOGGLE -->
+        <button id="themeToggle" class="icon-btn" title="Toggle theme">🌓</button>
+        <div id="userArea" class="user-area"></div>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- AUTH -->
+      <section id="authView" class="card center-card">
+        <div class="auth-grid">
+          <aside class="left-panel">
+            <h2>Welcome to <strong>SchedPro</strong></h2>
+            <p class="muted">Organise courses, trainers, and weekly schedules. Create weeks, allocate slots, and let students view personal timetables.</p>
+            <ul class="features">
+              <li>Role-based access (Admin, Student, Trainer)</li>
+              <li>Week builder & slot allocation</li>
+              <li>Personalised timetables</li>
+            </ul>
+            <small class="muted">Use <strong>admin@example.com</strong> / <em>adminpass</em> if seeded.</small>
+          </aside>
+
+          <div class="right-panel">
+            <div class="toggle">
+              <button id="showSignIn" class="tab active">Sign In</button>
+              <button id="showSignUp" class="tab">Create Account</button>
+            </div>
+
+            <form id="formSignIn" class="form" autocomplete="on">
+              <h3>Sign In</h3>
+              <label>Email <input id="in_email" type="email" required placeholder="you@domain.com"/><div class="err" id="err_in_email"></div></label>
+              <label>Password
+                <div class="pwRow">
+                  <input id="in_password" type="password" required minlength="6" placeholder="Your password"/>
+                  <button type="button" class="pwToggle" data-target="in_password">Show</button>
+                </div>
+                <div class="err" id="err_in_password"></div>
+              </label>
+              <div class="actions-row">
+                <button id="btnSignIn" class="btn primary" type="submit">Sign In</button>
+                <button id="btnGuest" class="btn ghost" type="button">Continue as Guest</button>
+              </div>
+              <div id="in_feedback" class="feedback"></div>
+            </form>
+
+            <form id="formSignUp" class="form hidden" autocomplete="on">
+              <h3>Create Account</h3>
+              <label>Full name <input id="up_name" type="text" required placeholder="Your full name"/><div class="err" id="err_up_name"></div></label>
+              <label>Email <input id="up_email" type="email" required placeholder="you@domain.com"/><div class="err" id="err_up_email"></div></label>
+              <label>Password
+                <div class="pwRow"><input id="up_password" type="password" required placeholder="Choose a strong password"/><button type="button" class="pwToggle" data-target="up_password">Show</button></div>
+                <div class="err" id="err_up_password"></div>
+              </label>
+
+              <div class="pw-guide">
+                <div>Password must have:</div>
+                <ul id="pw_rules">
+                  <li data-rule="len" class="invalid">At least <strong>8</strong> characters</li>
+                  <li data-rule="upper" class="invalid">An <strong>uppercase</strong> letter</li>
+                  <li data-rule="lower" class="invalid">A <strong>lowercase</strong> letter</li>
+                  <li data-rule="digit" class="invalid">A <strong>number</strong></li>
+                  <li data-rule="symbol" class="invalid">A <strong>special</strong> character</li>
+                </ul>
+                <div class="strength"><div id="meter" class="meter"></div></div>
+              </div>
+
+              <label>Role <select id="up_role"><option value="student" selected>Student</option><option value="trainer">Trainer</option></select></label>
+              <div class="actions-row"><button id="btnSignUp" class="btn primary" type="submit">Create Account</button><button id="btnCancelUp" class="btn ghost" type="button">Cancel</button></div>
+              <div id="up_feedback" class="feedback"></div>
+            </form>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- DASHBOARD (hidden by default) -->
+      <section id="dashboardView" class="hidden">
+        <div class="dash-head">
+          <div><h2 id="dashTitle">Dashboard</h2><p id="dashSubtitle" class="muted">Week view & quick actions</p></div>
+          <div class="dash-actions">
+            <!-- ADMIN: CREATE WEEK SECTION -->
+<div id="adminWeekTools" class="admin-only hidden" style="margin-bottom: 20px;">
+    <h3>Create Blank Week</h3>
+    <input type="date" id="newWeek" />
+    <button id="createBlankWeek" class="btn primary">Create Week</button>
+</div>
+
+            <input id="weekPicker" type="date"/>
+            <button id="btnPrevWeek" class="btn">◀</button>
+            <button id="btnNextWeek" class="btn">▶</button>
+            <button id="btnReload" class="btn">Reload</button>
+            <button id="btnLogout" class="btn ghost">Logout</button>
+
+          </div>
+        </div>
+
+        <div class="dash-body">
+          <aside class="left-col">
+            <div class="card">
+              <h4>Overview</h4>
+              <div id="overview" class="muted">Loading...</div>
+              <hr/>
+              <h5>Quick Links</h5>
+              <div class="quick-links">
+                <button id="linkCourses" class="btn ghost">Courses</button>
+                <button id="linkModules" class="btn ghost">Modules</button>
+                <button id="linkEnroll" class="btn ghost">Enrollments</button>
+                <button id="linkTrainers" class="btn ghost">Trainers</button>
+              </div>
+            </div>
+
+            <div id="adminControls" class="card hidden">
+              <h4>Admin Controls</h4>
+              <label>Create blank week (Monday): <input id="newWeek" type="date"/></label>
+              <button id="createBlankWeek" class="btn primary">Create Week</button>
+            </div>
+          </aside>
+
+          <section class="main-col">
+            <div id="calendarWrap" class="card">
+              <h4 id="calendarTitle">Weekly Schedule</h4>
+              <div id="calendar" class="calendar">Loading schedule...</div>
+            </div>
+
+            <!-- allocate modal -->
+            <div id="slotModal" class="modal hidden">
+              <div class="modal-inner">
+                <h4>Allocate Slot</h4>
+                <div id="slotInfo" class="muted"></div>
+
+                <label>Course
+                  <select id="alloc_course"></select>
+                </label>
+                <label>Module
+                  <select id="alloc_module"></select>
+                </label>
+                <label>Trainer
+                  <select id="alloc_trainer"></select>
+                </label>
+
+                <div class="actions-row">
+                  <button id="allocSave" class="btn primary">Save</button>
+                  <button id="allocCancel" class="btn ghost">Cancel</button>
+                </div>
+                <div id="alloc_feedback" class="feedback"></div>
+              </div>
+            </div>
+
+            <!-- quick modal -->
+            <div id="quickModal" class="modal hidden">
+              <div class="modal-inner" style="max-width:600px">
+                <h4 id="quickTitle">List</h4>
+                <div id="quickBody" class="modal-content-list"></div>
+                <div class="actions-row"><button id="quickClose" class="btn ghost">Close</button></div>
+              </div>
+            </div>
+
+            <!-- trainer panel (for trainer users) -->
+            <div id="trainerPanel" class="card hidden">
+              <h4>Trainer Schedule</h4>
+              <div id="trainerSchedule" class="calendar">Loading...</div>
+            </div>
+
+          </section>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer muted">Made with ♥ — SchedPro demo</footer>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
